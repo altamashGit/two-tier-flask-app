@@ -7,7 +7,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DB}
-        #command: sh -c "sleep 30 && python app.py"
+      command: sh -c "sleep 30 && python app.py"
     networks:
       - app_network
     depends_on:
