@@ -11,7 +11,7 @@ services:
     networks:
       - app_network
     depends_on:
-       db:
+      db:
         condition: service_healthy
     restart: always
     healthcheck:
