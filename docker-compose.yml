@@ -1,12 +1,28 @@
 version: '3.8'
 services:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DB: ${MYSQL_DB}
+    volumes:
+      - admin_altamash:/var/lib/mysql
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
   web:
     build: .
     ports:
       - "5000:5000"
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_DB: ${MYSQL_DB}
       MYSQL_HOST: mysql       
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -22,24 +38,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-
-  mysql:
-    image: mysql:8.0
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
-    volumes:
-      - admin_altamash:/var/lib/mysql
-    networks:
-      - app_network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
 
 volumes:
   admin_altamash:
