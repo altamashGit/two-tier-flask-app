@@ -15,7 +15,7 @@ services:
       test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
       interval: 10s
       timeout: 5s
-      restart_period: 30s
+      retries: 3
 
   db:
     image: mysql:8.0
