@@ -7,10 +7,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DB}
-      MYSQL_HOST: db        # Add this to let Flask know the MySQL host
+      MYSQL_HOST: mysql       
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    command: sh -c "sleep 30 && python app.py"  # Indented properly
+    command: sh -c "sleep 30 && python app.py"  
     networks:
       - app_network
     depends_on:
