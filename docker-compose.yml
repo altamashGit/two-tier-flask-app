@@ -1,45 +1,41 @@
 version: '3.8'
 services:
-  web:
-    build: .
-    ports: 
-      - "5000:5000"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
-      command: sh -c "sleep 30 && python app.py"
-    networks:
-      - app_network
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3 
-
-  db:
+  mysql:
     image: mysql:8.0
+    container_name: mysql
     ports:
-      - 3306:3306
+      - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DB}
     volumes:
       - admin_altamash:/var/lib/mysql
     networks:
       - app_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot","-proot@123"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      MYSQL_HOST: ${MYSQL_HOST} #use this one
+      MYSQL_USER: ${MYSQL_USER} #use this one
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD} #use this one
+      MYSQL_DB: ${MYSQL_DB} #use this one
+    command: sh -c "sleep 30 && python app.py"  # Extra wait time
+    networks:
+      - app_network
+    depends_on:
+      mysql:
+        condition: service_healthy
 
 volumes:
-  admin_altamash:  
-  
+  admin_altamash:
+
 networks:
   app_network:
+    driver: bridge
